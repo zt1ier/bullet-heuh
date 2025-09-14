@@ -18,6 +18,3 @@ shape = SubResource("RectangleShape2D_3vyb7")
 [node name="Sprite2D" type="Sprite2D" parent="."]
 scale = Vector2(0.5, 0.5)
 texture = ExtResource("1_3vyb7")
-
-[node name="AttackTimer" type="Timer" parent="."]
-one_shot = true

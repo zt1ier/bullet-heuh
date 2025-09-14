@@ -14,16 +14,16 @@ var state_name: String = ""
 
 @export var projectile_scene: PackedScene
 @export var movement_speed: float = 300.0
-@export var fire_rate: float = 1.0
+@export var fire_rate: float = 0.25
 
 
 var run_speed: float
 var walk_speed: float
 
+var attack_speed: float
+var time_since_attack: float
+
 var current_state = States.IDLE
-
-
-@onready var attack_timer: Timer = $AttackTimer
 
 
 func _ready() -> void:
@@ -32,10 +32,7 @@ func _ready() -> void:
 
 	run_speed = movement_speed
 	walk_speed = movement_speed / 2
-	attack_timer.wait_time = fire_rate
-
-	if attack_timer.one_shot == false:
-		attack_timer.one_shot = true
+	attack_speed = fire_rate
 
 
 func _physics_process(delta: float) -> void:
@@ -55,11 +52,13 @@ func _physics_process(delta: float) -> void:
 			_process_attacking_while_moving(direction)
 			state_name = "attack while move"
 
+	time_since_attack += get_process_delta_time()
+
 	# --- TRANSITION STATES ---
 	if Input.is_action_pressed("attack"):
-		if direction != Vector2.ZERO and can_attack():
+		if direction != Vector2.ZERO:
 			current_state = States.ATTACKING_WHILE_MOVING
-		else:
+		elif direction == Vector2.ZERO:
 			current_state = States.ATTACKING
 	elif direction != Vector2.ZERO:
 		current_state = States.MOVING
@@ -76,22 +75,21 @@ func _process_moving(direction: Vector2) -> void:
 
 
 func _process_attacking() -> void:
-	_attack()
+	if time_since_attack >= attack_speed:
+		_attack()
 
 
 func _process_attacking_while_moving(direction: Vector2) -> void:
 	velocity = direction * walk_speed
-	_attack()
+
+	if time_since_attack >= attack_speed: 
+		_attack()
 
 
 func _attack() -> void:
-	attack_timer.start()
-
 	var projectile := projectile_scene.instantiate() as Projectile
 	projectile.direction = -(global_position - get_global_mouse_position()).normalized()
 	projectile.global_position = global_position
 	add_sibling(projectile)
 
-
-func can_attack() -> bool:
-	return attack_timer.is_stopped()
+	time_since_attack = 0
