@@ -1,5 +1,5 @@
 class_name Player 
-extends CharacterBody2D
+extends Entity
 
 
 enum States {
@@ -9,12 +9,8 @@ enum States {
 	ATTACKING_WHILE_MOVING,
 }
 
-var state_name: String = ""
-
 
 @export var projectile_scene: PackedScene
-@export var movement_speed: float = 300.0
-@export var fire_rate: float = 0.25
 
 
 var run_speed: float
@@ -30,27 +26,18 @@ func _ready() -> void:
 	if not is_in_group("Player"):
 		add_to_group("Player")
 
-	run_speed = movement_speed
-	walk_speed = movement_speed / 2
-	attack_speed = fire_rate
+	_fill_variables()
 
 
 func _physics_process(delta: float) -> void:
-	var direction = Input.get_vector("move_left", "move_right", "move_up", "move_down").normalized()
+	var direction := Input.get_vector("move_left", "move_right", "move_up", "move_down").normalized()
 
 	# --- PROCESS STATES ---
 	match current_state:
-		States.IDLE:
-			state_name = "idle"
-		States.MOVING:
-			_process_moving(direction)
-			state_name = "move"
-		States.ATTACKING:
-			_process_attacking()
-			state_name = "attack"
-		States.ATTACKING_WHILE_MOVING:
-			_process_attacking_while_moving(direction)
-			state_name = "attack while move"
+		States.IDLE: pass
+		States.MOVING: _process_moving(direction)
+		States.ATTACKING: _process_attacking()
+		States.ATTACKING_WHILE_MOVING: _process_attacking_while_moving(direction)
 
 	time_since_attack += get_process_delta_time()
 
@@ -64,8 +51,6 @@ func _physics_process(delta: float) -> void:
 		current_state = States.MOVING
 	else:
 		current_state = States.IDLE
-
-	print(state_name)
 
 	move_and_slide()
 
@@ -93,3 +78,9 @@ func _attack() -> void:
 	add_sibling(projectile)
 
 	time_since_attack = 0
+
+
+func _fill_variables() -> void:
+	run_speed = movement_speed
+	walk_speed = movement_speed / 2
+	attack_speed = fire_rate
