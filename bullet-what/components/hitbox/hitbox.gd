@@ -10,9 +10,12 @@ extends Area2D
 
 
 func _ready() -> void:
-	if not is_connected("area_entered", Callable(self, "")):
-		connect("area_entered", Callable(self, ""))
+	if not is_connected("area_entered", Callable(self, "_on_area_entered")):
+		connect("area_entered", Callable(self, "_on_area_entered"))
+
+	if is_connected("area_entered", Callable(self, "_on_area_entered")):
+		print("%s hitbox init" % actor.name)
 
 
-func _on_area_entered(hitbox: Hurtbox) -> void:
-	pass
+func _on_area_entered(hurtbox: Hurtbox) -> void:
+	actor.call_deferred("queue_free")

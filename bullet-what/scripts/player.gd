@@ -75,6 +75,7 @@ func _attack() -> void:
 	var projectile := projectile_scene.instantiate() as Projectile
 	projectile.direction = -(global_position - get_global_mouse_position()).normalized()
 	projectile.global_position = global_position
+	projectile.damage = damage
 	add_sibling(projectile)
 
 	time_since_attack = 0
