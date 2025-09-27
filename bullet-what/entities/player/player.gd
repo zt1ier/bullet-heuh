@@ -49,6 +49,8 @@ func _physics_process(delta: float) -> void:
 		PlayerState.ATTACKING_WHILE_MOVING:
 			state = "am"
 			_process_attacking_while_moving(direction, delta)
+		_:
+			print("Praise God")
 
 	time_since_attack += get_process_delta_time()
 
