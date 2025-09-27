@@ -21,8 +21,8 @@ var walk_speed: float
 var time_since_attack: float
 
 # --- STATE HANDLING ---
-var current_state = BaseState.IDLE
-var state: String = "" # debug, delete whenever you feel like it
+var current_state = BaseState.IDLE # <-- THIS IS A PROBLEM;
+#I think game assigns the "BaseState" type on compile
 
 
 func _ready() -> void:
@@ -38,23 +38,17 @@ func _physics_process(delta: float) -> void:
 	# --- PROCESS STATES ---
 	match current_state:
 		BaseState.IDLE:
-			state = "i"
-			_process_idle(direction, delta)
+			_process_idle()
 		BaseState.MOVING:
-			state = "m"
-			_process_moving(direction, delta)
+			_process_moving(direction)
 		PlayerState.ATTACKING:
-			state = "a"
 			_process_attacking()
 		PlayerState.ATTACKING_WHILE_MOVING:
-			state = "am"
-			_process_attacking_while_moving(direction, delta)
+			_process_attacking_while_moving(direction)
 		_:
 			print("Praise God")
 
 	time_since_attack += get_process_delta_time()
-
-	print(state)
 
 	# --- TRANSITION STATES ---
 	if Input.is_action_pressed("attack"):
@@ -70,11 +64,11 @@ func _physics_process(delta: float) -> void:
 	move_and_slide()
 
 
-func _process_idle(direction: Vector2, delta: float) -> void:
+func _process_idle() -> void:
 	velocity = velocity.move_toward(Vector2.ZERO, friction)
 
 
-func _process_moving(direction: Vector2, delta: float) -> void:
+func _process_moving(direction: Vector2) -> void:
 	velocity = velocity.move_toward(direction * run_speed, friction)
 
 
@@ -83,7 +77,7 @@ func _process_attacking() -> void:
 		_attack()
 
 
-func _process_attacking_while_moving(direction: Vector2, delta: float) -> void:
+func _process_attacking_while_moving(direction: Vector2) -> void:
 	velocity = velocity.move_toward(direction * walk_speed, friction)
 
 	if time_since_attack >= fire_rate: 
