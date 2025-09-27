@@ -2,41 +2,57 @@ class_name Player
 extends Entity
 
 
+# --- PLAYER STATE ---
 enum PlayerState {
 	ATTACKING,
 	ATTACKING_WHILE_MOVING,
 }
 
 
+# --- PROJECTILE ---
 @export var projectile_scene: PackedScene
 
 
+# --- MOVEMENT ---
 var run_speed: float
 var walk_speed: float
 
+# --- FIRING ---
 var time_since_attack: float
 
+# --- STATE HANDLING ---
 var current_state = BaseState.IDLE
+var state: String = "" # debug, delete whenever you feel like it
 
 
 func _ready() -> void:
 	if not is_in_group("Player"):
 		add_to_group("Player")
-
 	_fill_variables()
 
 
 func _physics_process(delta: float) -> void:
+	# --- MOVEMENT INPUT ---
 	var direction := Input.get_vector("move_left", "move_right", "move_up", "move_down").normalized()
 
 	# --- PROCESS STATES ---
 	match current_state:
-		BaseState.IDLE: _process_idle(direction, delta)
-		BaseState.MOVING: _process_moving(direction, delta)
-		PlayerState.ATTACKING: _process_attacking()
-		PlayerState.ATTACKING_WHILE_MOVING: _process_attacking_while_moving(direction, delta)
+		BaseState.IDLE:
+			state = "i"
+			_process_idle(direction, delta)
+		BaseState.MOVING:
+			state = "m"
+			_process_moving(direction, delta)
+		PlayerState.ATTACKING:
+			state = "a"
+			_process_attacking()
+		PlayerState.ATTACKING_WHILE_MOVING:
+			state = "am"
+			_process_attacking_while_moving(direction, delta)
 
 	time_since_attack += get_process_delta_time()
+
+	print(state)
 
 	# --- TRANSITION STATES ---
 	if Input.is_action_pressed("attack"):
