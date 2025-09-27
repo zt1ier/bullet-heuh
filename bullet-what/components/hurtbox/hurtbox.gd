@@ -13,9 +13,9 @@ func _ready() -> void:
 	if not is_connected("area_entered", Callable(self, "_on_area_entered")):
 		connect("area_entered", Callable(self, "_on_area_entered"))
 
-	if is_connected("area_entered", Callable(self, "_on_area_entered")):
-		print("%s hurtbox init" % actor.name)
-
 
 func _on_area_entered(hitbox: Hitbox) -> void:
+	if actor == hitbox.actor.damage_source:
+		return
 	actor.take_damage(hitbox.actor.damage)
+	actor.apply_knockback(hitbox.actor)

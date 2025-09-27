@@ -13,9 +13,8 @@ func _ready() -> void:
 	if not is_connected("area_entered", Callable(self, "_on_area_entered")):
 		connect("area_entered", Callable(self, "_on_area_entered"))
 
-	if is_connected("area_entered", Callable(self, "_on_area_entered")):
-		print("%s hitbox init" % actor.name)
-
 
 func _on_area_entered(hurtbox: Hurtbox) -> void:
+	if hurtbox.actor == actor.damage_source:
+		return
 	actor.call_deferred("queue_free")

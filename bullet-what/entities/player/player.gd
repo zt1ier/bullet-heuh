@@ -72,10 +72,11 @@ func _process_attacking_while_moving(direction: Vector2) -> void:
 
 
 func _attack() -> void:
-	var projectile := projectile_scene.instantiate() as Projectile
+	var projectile := projectile_scene.instantiate() as PlayerProjectile
 	projectile.direction = -(global_position - get_global_mouse_position()).normalized()
 	projectile.global_position = global_position
 	projectile.damage = damage
+	projectile.damage_source = self
 	add_sibling(projectile)
 
 	time_since_attack = 0

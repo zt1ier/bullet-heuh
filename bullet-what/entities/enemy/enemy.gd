@@ -19,6 +19,7 @@ enum States {
 func _ready() -> void:
 	if not is_in_group("Enemies"):
 		add_to_group("Enemies")
+	damage_source = self #--- if MeleeEnemy.
 
 
 func _physics_process(delta: float) -> void:

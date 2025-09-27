@@ -1,9 +1,9 @@
 [gd_scene load_steps=8 format=3 uid="uid://rr58ryn7kgp0"]
 
-[ext_resource type="Texture2D" uid="uid://dhuli1yhspq64" path="res://assets/icon.svg" id="1_7p1mj"]
-[ext_resource type="Script" uid="uid://bqdofd5f3lcuc" path="res://scripts/enemy.gd" id="1_md0e3"]
-[ext_resource type="PackedScene" uid="uid://dc1h1qeanh27b" path="res://components/hurtbox/hurtbox.tscn" id="3_c8ylr"]
-[ext_resource type="PackedScene" uid="uid://cogn6oaj8fduw" path="res://components/hitbox/hitbox.tscn" id="3_pm80n"]
+[ext_resource type="Script" uid="uid://bqdofd5f3lcuc" path="res://entities/enemy/enemy.gd" id="1_msovg"]
+[ext_resource type="PackedScene" uid="uid://dc1h1qeanh27b" path="res://components/hurtbox/hurtbox.tscn" id="2_twyc1"]
+[ext_resource type="PackedScene" uid="uid://cogn6oaj8fduw" path="res://components/hitbox/hitbox.tscn" id="3_w4yt1"]
+[ext_resource type="Texture2D" uid="uid://dhuli1yhspq64" path="res://assets/icon.svg" id="4_ipr6v"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_pm80n"]
 size = Vector2(66, 66)
@@ -15,19 +15,18 @@ size = Vector2(66, 66)
 size = Vector2(64, 24)
 
 [node name="Enemy" type="CharacterBody2D" groups=["Enemies"]]
-collision_layer = 4
-collision_mask = 5
-script = ExtResource("1_md0e3")
+collision_layer = 2
+collision_mask = 3
+script = ExtResource("1_msovg")
 health = 10
-damage = 1
 
-[node name="Hurtbox" parent="." node_paths=PackedStringArray("actor") instance=ExtResource("3_c8ylr")]
+[node name="Hurtbox" parent="." node_paths=PackedStringArray("actor") instance=ExtResource("2_twyc1")]
 actor = NodePath("..")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Hurtbox"]
 shape = SubResource("RectangleShape2D_pm80n")
 
-[node name="Hitbox" parent="." node_paths=PackedStringArray("actor") instance=ExtResource("3_pm80n")]
+[node name="Hitbox" parent="." node_paths=PackedStringArray("actor") instance=ExtResource("3_w4yt1")]
 actor = NodePath("..")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Hitbox"]
@@ -40,4 +39,4 @@ shape = SubResource("RectangleShape2D_md0e3")
 [node name="Sprite" type="Sprite2D" parent="."]
 modulate = Color(1, 0.264747, 0.205037, 1)
 scale = Vector2(0.5, 0.5)
-texture = ExtResource("1_7p1mj")
+texture = ExtResource("4_ipr6v")
