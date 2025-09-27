@@ -20,7 +20,7 @@ enum BaseState {
 
 # --- MOVEMENT ---
 @export var movement_speed: float = 300.0
-@export var friction: float = 50.0
+@export var friction: float = 70.0
 
 
 # --- DAMAGE REFERENCE (for Hitbox and Hurtbox) ---
@@ -51,5 +51,5 @@ func apply_knockback(source: Entity) -> void:
 
 func die() -> void:
 	set_physics_process(false)
-	print("%s died" % [name])
+	print("%s died" % name)
 	#queue_free()
