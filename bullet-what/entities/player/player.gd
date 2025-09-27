@@ -53,11 +53,11 @@ func _physics_process(delta: float) -> void:
 
 
 func _process_idle(direction: Vector2, delta: float) -> void:
-	velocity = lerp(direction, Vector2.ZERO, delta)
+	velocity = velocity.move_toward(Vector2.ZERO, friction)
 
 
 func _process_moving(direction: Vector2, delta: float) -> void:
-	velocity = velocity.lerp(direction * run_speed, delta * friction)
+	velocity = velocity.move_toward(direction * run_speed, friction)
 
 
 func _process_attacking() -> void:
@@ -66,7 +66,7 @@ func _process_attacking() -> void:
 
 
 func _process_attacking_while_moving(direction: Vector2, delta: float) -> void:
-	velocity = velocity.lerp(direction * run_speed, delta * friction)
+	velocity = velocity.move_toward(direction * walk_speed, friction)
 
 	if time_since_attack >= fire_rate: 
 		_attack()

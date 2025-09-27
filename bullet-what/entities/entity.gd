@@ -20,7 +20,7 @@ enum BaseState {
 
 # --- MOVEMENT ---
 @export var movement_speed: float = 300.0
-@export var friction: float = 100.0
+@export var friction: float = 50.0
 
 
 # --- DAMAGE REFERENCE (for Hitbox and Hurtbox) ---
