@@ -2,23 +2,39 @@ class_name Entity
 extends CharacterBody2D
 
 
-@export var health: int
-@export var damage: int
+# --- BASE STATE ---
+enum BaseState {
+	IDLE,
+	MOVING,
+	KNOCKEDBACK,
+}
+
+
+# --- DEFAULT ---
+@export var health: int = 10
+
+# --- ATTACKING ---
+@export var damage: int = 5
 @export var fire_rate: float = 0.25
-@export var movement_speed: float = 300.0
 @export var knockback_force: float = 100.0
 
-
-var damage_source: Entity
-
-
-func _physics_process(delta: float) -> void:
-	_handle_movement()
-	move_and_slide()
+# --- MOVEMENT ---
+@export var movement_speed: float = 300.0
+@export var friction: float = 100.0
 
 
-func _handle_movement() -> void:
-	pass
+# --- DAMAGE REFERENCE (for Hitbox and Hurtbox) ---
+var damage_source: Entity = null
+
+# --- KNOCKBACK PARAMETERS ---
+var knockback: Vector2 = Vector2.ZERO
+var knockback_timer: float = 0.0
+
+
+func hit_by(source: Entity) -> void:
+	take_damage(source.damage)
+	if health > 0:
+		apply_knockback(source)
 
 
 func take_damage(amount: int) -> void:

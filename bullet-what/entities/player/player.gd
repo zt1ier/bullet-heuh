@@ -2,9 +2,7 @@ class_name Player
 extends Entity
 
 
-enum States {
-	IDLE,
-	MOVING,
+enum PlayerState {
 	ATTACKING,
 	ATTACKING_WHILE_MOVING,
 }
@@ -16,10 +14,9 @@ enum States {
 var run_speed: float
 var walk_speed: float
 
-var attack_speed: float
 var time_since_attack: float
 
-var current_state = States.IDLE
+var current_state = BaseState.IDLE
 
 
 func _ready() -> void:
@@ -34,40 +31,44 @@ func _physics_process(delta: float) -> void:
 
 	# --- PROCESS STATES ---
 	match current_state:
-		States.IDLE: pass
-		States.MOVING: _process_moving(direction)
-		States.ATTACKING: _process_attacking()
-		States.ATTACKING_WHILE_MOVING: _process_attacking_while_moving(direction)
+		BaseState.IDLE: _process_idle(direction, delta)
+		BaseState.MOVING: _process_moving(direction, delta)
+		PlayerState.ATTACKING: _process_attacking()
+		PlayerState.ATTACKING_WHILE_MOVING: _process_attacking_while_moving(direction, delta)
 
 	time_since_attack += get_process_delta_time()
 
 	# --- TRANSITION STATES ---
 	if Input.is_action_pressed("attack"):
 		if direction != Vector2.ZERO:
-			current_state = States.ATTACKING_WHILE_MOVING
+			current_state = PlayerState.ATTACKING_WHILE_MOVING
 		elif direction == Vector2.ZERO:
-			current_state = States.ATTACKING
+			current_state = PlayerState.ATTACKING
 	elif direction != Vector2.ZERO:
-		current_state = States.MOVING
+		current_state = BaseState.MOVING
 	else:
-		current_state = States.IDLE
+		current_state = BaseState.IDLE
 
 	move_and_slide()
 
 
-func _process_moving(direction: Vector2) -> void:
-	velocity = direction * run_speed
+func _process_idle(direction: Vector2, delta: float) -> void:
+	velocity = lerp(direction, Vector2.ZERO, delta)
+
+
+func _process_moving(direction: Vector2, delta: float) -> void:
+	velocity = velocity.lerp(direction * run_speed, delta * friction)
 
 
 func _process_attacking() -> void:
-	if time_since_attack >= attack_speed:
+	if time_since_attack >= fire_rate:
 		_attack()
 
 
-func _process_attacking_while_moving(direction: Vector2) -> void:
-	velocity = direction * walk_speed
+func _process_attacking_while_moving(direction: Vector2, delta: float) -> void:
+	velocity = velocity.lerp(direction * run_speed, delta * friction)
 
-	if time_since_attack >= attack_speed: 
+	if time_since_attack >= fire_rate: 
 		_attack()
 
 
@@ -75,8 +76,8 @@ func _attack() -> void:
 	var projectile := projectile_scene.instantiate() as PlayerProjectile
 	projectile.direction = -(global_position - get_global_mouse_position()).normalized()
 	projectile.global_position = global_position
-	projectile.damage = damage
 	projectile.damage_source = self
+	projectile.damage = damage
 	add_sibling(projectile)
 
 	time_since_attack = 0
@@ -85,4 +86,3 @@ func _attack() -> void:
 func _fill_variables() -> void:
 	run_speed = movement_speed
 	walk_speed = movement_speed / 2
-	attack_speed = fire_rate

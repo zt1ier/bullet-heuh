@@ -15,7 +15,6 @@ size = Vector2(64, 24)
 collision_mask = 2
 script = ExtResource("1_bls4j")
 projectile_scene = ExtResource("2_bls4j")
-health = 10
 
 [node name="Hurtbox" parent="." node_paths=PackedStringArray("actor") instance=ExtResource("3_8fjmc")]
 actor = NodePath("..")

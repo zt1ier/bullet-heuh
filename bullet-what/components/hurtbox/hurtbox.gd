@@ -17,5 +17,4 @@ func _ready() -> void:
 func _on_area_entered(hitbox: Hitbox) -> void:
 	if actor == hitbox.actor.damage_source:
 		return
-	actor.take_damage(hitbox.actor.damage)
-	actor.apply_knockback(hitbox.actor)
+	actor.hit_by(hitbox.actor)
